@@ -35,68 +35,66 @@ def checkWin(grid):
         if '-' in row:
             return "con" 
     return 'D'
+
+
 def genX(grid, alpha, beta):
-    current = v = -2
-    c=checkWin(grid)
-    x1=3
-    x2=3
-    if c== "con":
-        for i in range(0,3):
-            for j in range(0,3):
-                if (grid[i][j]=='-'):
-                    grid[i][j]='X'
-                    tmp= genO(grid, alpha, beta)
-                    tmp=tmp[0]
-                    v=max(v,tmp)
-                    if(v>current):
-                        current=v
-                        x1=i
-                        x2=j                        
-                    grid[i][j]='-'                    
-                    if v >=beta :
-                        return v,x1,x2
-                    alpha= max(alpha,v)          
-        return v , x1,x2   
-    elif c=='D':
-        return 0 ,x1,x2
-    elif c=='X':
-        return 1 ,x1,x2
-    else :
-        return -1 ,x1,x2
-    
+    current=v=-2
+    if (grid[i][j]=='-'):
+        grid[i][j]='X'
+        tmp= value(grid, alpha, beta)
+        tmp=tmp[0]
+        v=max(v,tmp)
+        if(v>current):
+            current=v
+            x1=i
+            x2=j                        
+        grid[i][j]='-'                    
+        if v >=beta :
+            return v,x1,x2
+        alpha= max(alpha,v)          
+
 #depth limited search/ evaluation function
-#alpha beta prunning
+
 #value function  
 def genO(grid, alpha, beta):
-    o1=3
-    o2=3 
     current=v=2
-    c=checkWin(grid)
+    if(grid[i][j]=='-'):
+        grid[i][j]='O'
+        tmp = value(grid, alpha, beta)
+        tmp=tmp[0]
+        v=min(v,tmp)
+        if v<current:
+            current=v
+            o1=i
+            o2=j
+        grid[i][j]='-'                     
+        if v <= alpha:
+            return v ,o1,o2
+        beta = min(beta,v)           
 
-    if c== "con":
+def value(grid,alpha,beta):
+    o2=o1=3
+
+    c=checkWin(grid)
+    #variable pour savoir le tour de qui
+    tour = 0
+    for i in grid:
+        for j in i:
+            if (j!='-'):
+                tour +=1
+    if c=="con":
         for i in range(0,3):
             for j in range(0,3):
-                if(grid[i][j]=='-'):
-                    grid[i][j]='O'
-                    tmp = genX(grid, alpha, beta)
-                    tmp=tmp[0]
-                    v=min(v,tmp)
-                    if v<current:
-                        current=v
-                        o1=i
-                        o2=j
-                    grid[i][j]='-'                     
-                    if v <= alpha:
-                        return v ,o1,o2
-                    beta = min(beta,v)           
-        return v ,o1,o2
-    elif c == 'D':
-        return 0 ,o1,o2
-    elif c== 'X':
-        return 1 ,o1,o2
+                if tour%2 == 0:
+                    return genX(grid,alpha,beta)
+                else:
+                    return genO(grid,alpha,beta)           
+    elif c=='D':
+        return 0, o1, o2
+    elif c=='X':
+        return 1,o1,o2
     else:
-        return -1 ,o1,o2
-
+        return -1,o1,o2
 
 
 while (run):
