@@ -30,7 +30,6 @@ def checkWin(grid):
         return grid[0][0]
     if grid[0][2] == grid[1][1] == grid[2][0] != '-':
         return grid[0][2] 
-
     for row in grid:
         if '-' in row:
             return "con" 
@@ -38,64 +37,71 @@ def checkWin(grid):
 
 
 def genX(grid, alpha, beta):
-    current=v=-2
-    if (grid[i][j]=='-'):
-        grid[i][j]='X'
-        tmp= value(grid, alpha, beta)
-        tmp=tmp[0]
-        v=max(v,tmp)
-        if(v>current):
-            current=v
-            x1=i
-            x2=j                        
-        grid[i][j]='-'                    
-        if v >=beta :
-            return v,x1,x2
-        alpha= max(alpha,v)          
+    
+    current = v = -2
+    x=3
+    y=3
+    for i in range(0,3):
+        for j in range(0,3):
+            if grid[i][j]=='-':
+                grid[i][j]='X'
+                tmp= value(grid, alpha, beta)            
+                v=max(v,tmp[0])
+                if(v>current):
+                    current=v
+                    x=i
+                    y=j 
+                grid[i][j]='-'                                      
+                if v >=beta :
+                    return (v,x,y)
+                alpha= max(alpha,v) 
+    return (v,x,y)    
 
-#depth limited search/ evaluation function
-
-#value function  
+    
 def genO(grid, alpha, beta):
-    current=v=2
-    if(grid[i][j]=='-'):
-        grid[i][j]='O'
-        tmp = value(grid, alpha, beta)
-        tmp=tmp[0]
-        v=min(v,tmp)
-        if v<current:
-            current=v
-            o1=i
-            o2=j
-        grid[i][j]='-'                     
-        if v <= alpha:
-            return v ,o1,o2
-        beta = min(beta,v)           
+    x=3
+    y=3 
+    current = v= 2
+    for i in range(0,3):
+        for j in range(0,3):
+            if (grid[i][j]=='-'):
+                grid[i][j]='O'
+                tmp = value(grid, alpha, beta)
+                v=min(v,tmp[0])
+                if v<current:
+                    current=v
+                    x=i
+                    y=j
+                grid[i][j]='-'                
+                if v <= alpha:
+                    return (v,x,y)
+                beta = min(beta,v)
+    return (v,x,y)
+    
+
 
 def value(grid,alpha,beta):
-    o2=o1=3
-
-    c=checkWin(grid)
-    #variable pour savoir le tour de qui
     tour = 0
     for i in grid:
         for j in i:
             if (j!='-'):
                 tour +=1
-    if c=="con":
-        for i in range(0,3):
-            for j in range(0,3):
-                if tour%2 == 0:
-                    return genX(grid,alpha,beta)
-                else:
-                    return genO(grid,alpha,beta)           
-    elif c=='D':
-        return 0, o1, o2
-    elif c=='X':
-        return 1,o1,o2
-    else:
-        return -1,o1,o2
+    c=checkWin(grid)
 
+    if c=="con":           
+        if tour % 2 == 0:
+            res = genX(grid,alpha,beta)
+        else :
+            res = genO(grid,alpha,beta)
+        return res
+    elif c=='D':
+        return (0,3,3)
+    elif c=='X':
+        return (1,3,3)
+    else:
+        return (-1,3,3)
+
+        
 
 while (run):
 
@@ -161,7 +167,7 @@ while (run):
 
         if first_player == False:
             
-            p,o1,o2 = genO(grid,-2,2)
+            p,o1,o2 = value(grid,-2,2)
             grid[o1][o2]='O'
             first_player = True
 
