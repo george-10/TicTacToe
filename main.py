@@ -48,14 +48,14 @@ def genX(grid, alpha, beta):
                     tmp= genO(grid, alpha, beta)
                     tmp=tmp[0]
                     v=max(v,tmp)
-                    if v >=beta :
-                        return v,x1,x2
-                    alpha= max(alpha,v)
                     if(v>current):
                         current=v
                         x1=i
                         x2=j                        
-                    grid[i][j]='-'           
+                    grid[i][j]='-'                    
+                    if v >=beta :
+                        return v,x1,x2
+                    alpha= max(alpha,v)          
         return v , x1,x2   
     elif c=='D':
         return 0 ,x1,x2
@@ -79,16 +79,16 @@ def genO(grid, alpha, beta):
                 if(grid[i][j]=='-'):
                     grid[i][j]='O'
                     tmp = genX(grid, alpha, beta)
-                    if v <= alpha:
-                        return v ,o1,o2
-                    beta = min(beta,v)
                     tmp=tmp[0]
                     v=min(v,tmp)
                     if v<current:
                         current=v
                         o1=i
                         o2=j
-                    grid[i][j]='-'            
+                    grid[i][j]='-'                     
+                    if v <= alpha:
+                        return v ,o1,o2
+                    beta = min(beta,v)           
         return v ,o1,o2
     elif c == 'D':
         return 0 ,o1,o2
