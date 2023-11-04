@@ -36,7 +36,7 @@ def checkWin(grid):
     return 'D'
 
 
-def genX(grid, alpha, beta):
+def genX(grid, alpha, beta, depth):
     
     current = v = -2
     x=3
@@ -45,7 +45,7 @@ def genX(grid, alpha, beta):
         for j in range(0,3):
             if grid[i][j]=='-':
                 grid[i][j]='X'
-                tmp= value(grid, alpha, beta)            
+                tmp= value(grid, alpha, beta,depth-1)            
                 v=max(v,tmp[0])
                 if(v>current):
                     current=v
@@ -58,15 +58,16 @@ def genX(grid, alpha, beta):
     return (v,x,y)    
 
     
-def genO(grid, alpha, beta):
+def genO(grid, alpha, beta,depth):
     x=3
     y=3 
     current = v= 2
     for i in range(0,3):
         for j in range(0,3):
             if (grid[i][j]=='-'):
+                
                 grid[i][j]='O'
-                tmp = value(grid, alpha, beta)
+                tmp = value(grid, alpha, beta,depth-1)
                 v=min(v,tmp[0])
                 if v<current:
                     current=v
@@ -81,7 +82,7 @@ def genO(grid, alpha, beta):
 def evalFunction(grid):
     rO=0
     rX=0
-    r=[[2,1,2],[2,3,2],[2,1,2]]
+    r=[[2,1,2],[1,3,1],[2,1,2]]
     for i in range(0,3):
         for j in range(0,3):
             if grid[i][j]!="-":
@@ -96,19 +97,20 @@ def evalFunction(grid):
     else:
         return 0
 
-def value(grid,alpha,beta):
+def value(grid,alpha,beta,depth):
     tour = 0
     for i in grid:
         for j in i:
             if (j!='-'):
                 tour +=1
     c=checkWin(grid)
-
-    if c=="con":           
+    if depth == 0:
+        return (evalFunction(grid),3,3)
+    elif c=="con":           
         if tour % 2 == 0:
-            res = genX(grid,alpha,beta)
+            res = genX(grid,alpha,beta,depth)
         else :
-            res = genO(grid,alpha,beta)
+            res = genO(grid,alpha,beta,depth)
         return res
     elif c=='D':
         return (0,3,3)
@@ -183,7 +185,7 @@ while (run):
 
         if first_player == False:
             
-            p,o1,o2 = value(grid,-2,2)
+            p,o1,o2 = value(grid,-2,2,7)
             grid[o1][o2]='O'
             first_player = True
 
