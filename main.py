@@ -78,7 +78,23 @@ def genO(grid, alpha, beta):
                 beta = min(beta,v)
     return (v,x,y)
     
-
+def evalFunction(grid):
+    rO=0
+    rX=0
+    r=[[2,1,2],[2,3,2],[2,1,2]]
+    for i in range(0,3):
+        for j in range(0,3):
+            if grid[i][j]!="-":
+                if grid[i][j]=="O":
+                    rO+=r[i][j]
+                else:
+                    rX+=r[i][j]
+    if rX>rO:
+        return 1
+    elif rX<rO:
+        return -1
+    else:
+        return 0
 
 def value(grid,alpha,beta):
     tour = 0
