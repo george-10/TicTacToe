@@ -35,7 +35,7 @@ def checkWin(grid):
         if '-' in row:
             return "con" 
     return 'D'
-def genX(grid):
+def genX(grid, alpha, beta):
     current = v = -2
     c=checkWin(grid)
     x1=3
@@ -45,9 +45,12 @@ def genX(grid):
             for j in range(0,3):
                 if (grid[i][j]=='-'):
                     grid[i][j]='X'
-                    tmp= genO(grid)
+                    tmp= genO(grid, alpha, beta)
                     tmp=tmp[0]
                     v=max(v,tmp)
+                    if v >=beta :
+                        return v,x1,x2
+                    alpha= max(alpha,v)
                     if(v>current):
                         current=v
                         x1=i
@@ -64,7 +67,7 @@ def genX(grid):
 #depth limited search/ evaluation function
 #alpha beta prunning
 #value function  
-def genO(grid):
+def genO(grid, alpha, beta):
     o1=3
     o2=3 
     current=v=2
@@ -75,7 +78,10 @@ def genO(grid):
             for j in range(0,3):
                 if(grid[i][j]=='-'):
                     grid[i][j]='O'
-                    tmp = genX(grid)
+                    tmp = genX(grid, alpha, beta)
+                    if v <= alpha:
+                        return v ,o1,o2
+                    beta = min(beta,v)
                     tmp=tmp[0]
                     v=min(v,tmp)
                     if v<current:
@@ -157,7 +163,7 @@ while (run):
 
         if first_player == False:
             
-            p,o1,o2 = genO(grid)
+            p,o1,o2 = genO(grid,-2,2)
             grid[o1][o2]='O'
             first_player = True
 
