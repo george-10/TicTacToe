@@ -1,9 +1,16 @@
+import pygame_widgets
 import pygame
+from pygame_widgets.slider import Slider
+
+
+
 pygame.init()
 width_proportion= 0.5
 width = 1100
 height =600
 screen = pygame.display.set_mode((width,height),pygame.RESIZABLE)
+difficulty=6
+slider = Slider(screen, int(width*0.1), int(height*0.9), int(width*0.8), 20, min=1, max=10, step=1)
 grid = [['-','-','-'],['-','-','-'],['-','-','-']]     
 x=[width_proportion*width-0.2*height,width_proportion*width,width_proportion*width+0.2*height]
 y=[0.3*height,0.5*height,0.7*height]
@@ -130,7 +137,9 @@ while (run):
         elif event.type == pygame.KEYDOWN and event.key == 114:
             grid = [['-','-','-'],['-','-','-'],['-','-','-']]
             first_player=True
-            stop=True  
+            stop=True 
+            difficulty = slider.getValue()
+             
             
         elif event.type == pygame.MOUSEBUTTONDOWN and event.button == 1 and stop:
             pos = event.pos
@@ -141,16 +150,16 @@ while (run):
             elif(pos[0]>width_proportion*width+0.1*height):
                 player[0]=2
                 
-                
+           
             if(pos[1]<0.4*height):
                 player[1]=0
             elif(pos[1]<0.6*height):
                 player[1]=1
-            elif(pos[1]>0.6*height):
+            elif(pos[1]>0.6*height ):
                 player[1]=2
                 
                 
-            if(grid[player[1]][player[0]]=='-'):
+            if(grid[player[1]][player[0]]=='-' and pos[1]<0.83*height):
                 if (first_player):
                     grid[player[1]][player[0]]='X' # X
                     first_player=False
@@ -165,8 +174,11 @@ while (run):
             x=[width_proportion*width-0.2*height,width_proportion*width,width_proportion*width+0.2*height]
             y=[0.3*height,0.5*height,0.7*height]
             screen = pygame.display.set_mode((width,height),pygame.RESIZABLE) 
+            slider.setY(int(height*0.9))
+            slider.setX(int(width*0.1))
+            slider.setWidth(int(width*0.8))
     
-    
+
     pygame.draw.line(screen,"black",(width_proportion*width-0.30*height,0.4*height),(width_proportion*width+0.30*height,0.40*height),5)#a
     pygame.draw.line(screen,"black",(width_proportion*width-0.30*height,0.6*height),(width_proportion*width+0.30*height,0.6*height),5)#b
     pygame.draw.line(screen,"black",(width_proportion*width-0.1*height,0.2*height),(width_proportion*width-0.1*height,0.8*height),5)#c
@@ -185,25 +197,27 @@ while (run):
 
         if first_player == False:
             
-            p,o1,o2 = value(grid,-2,2,7)
+            p,o1,o2 = value(grid,-2,2,difficulty)
             grid[o1][o2]='O'
             first_player = True
 
-
     else:
         if(result=='X'):
-            text = f.render("X Wins the game!!",True,(0,0,0))
+            text = f.render("X Wins the game!!",True,(255,0,0))
             screen.blit(text,(width/2-width*0.11,height*0.05))
             stop=False
         elif(result=='O'):
-            text = f.render("O Wins the game!!",True,(0,0,0))
+            text = f.render("O Wins the game!!",True,(255,0,0))
             screen.blit(text,(width/2-width*0.11,height*0.05))
             stop=False
         elif(result=='D'):
-            text = f.render("It's a Draw :(",True,(0,0,0))
+            text = f.render("It's a Draw :(",True,(255,0,0))
             screen.blit(text,(width/2-width*0.11,height*0.05))
             stop=False
-          
-    
+    text = f.render("Difficulty: "+str(difficulty),True,(0,0,0)) 
+    screen.blit(text,(width*0.1,0.2*height))
+    text = f.render("Press R to change the difficutly and reset the game",True,(0,0,0))  
+    screen.blit(text,(width*0.24,0.1*height))        
+    pygame_widgets.update(pygame.event.get())
     pygame.display.update()
 
