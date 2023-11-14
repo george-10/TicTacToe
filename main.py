@@ -5,12 +5,13 @@ from pygame_widgets.slider import Slider
 
 
 pygame.init()
+clock = pygame.time.Clock()
 width_proportion= 0.5
 width = 1100
 height =600
 screen = pygame.display.set_mode((width,height),pygame.RESIZABLE)
 difficulty=6
-slider = Slider(screen, int(width*0.1), int(height*0.9), int(width*0.8), 20, min=1, max=10, step=1)
+slider = Slider(screen, int(width*0.1), int(height*0.9), int(width*0.8), 20, min=1, max=9, step=0.01)
 grid = [['-','-','-'],['-','-','-'],['-','-','-']]     
 x=[width_proportion*width-0.2*height,width_proportion*width,width_proportion*width+0.2*height]
 y=[0.3*height,0.5*height,0.7*height]
@@ -39,7 +40,7 @@ def checkWin(grid):
         return grid[0][2] 
     for row in grid:
         if '-' in row:
-            return "con" 
+            return 'C' 
     return 'D'
 
 
@@ -48,6 +49,7 @@ def genX(grid, alpha, beta, depth):
     current = v = -2
     x=3
     y=3
+    
     for i in range(0,3):
         for j in range(0,3):
             if grid[i][j]=='-':
@@ -58,14 +60,16 @@ def genX(grid, alpha, beta, depth):
                     current=v
                     x=i
                     y=j 
-                grid[i][j]='-'                                      
+                grid[i][j]='-'   
+                                                   
                 if v >=beta :
                     return (v,x,y)
                 alpha= max(alpha,v) 
     return (v,x,y)    
 
+
     
-def genO(grid, alpha, beta,depth):
+def genO(grid, alpha, beta,depth):    
     x=3
     y=3 
     current = v= 2
@@ -85,7 +89,10 @@ def genO(grid, alpha, beta,depth):
                     return (v,x,y)
                 beta = min(beta,v)
     return (v,x,y)
-    
+
+
+
+  
 def evalFunction(grid):
     rO=0
     rX=0
@@ -113,7 +120,7 @@ def value(grid,alpha,beta,depth):
     c=checkWin(grid)
     if depth == 0:
         return (evalFunction(grid),3,3)
-    elif c=="con":           
+    elif c=='C':           
         if tour % 2 == 0:
             res = genX(grid,alpha,beta,depth)
         else :
@@ -138,7 +145,7 @@ while (run):
             grid = [['-','-','-'],['-','-','-'],['-','-','-']]
             first_player=True
             stop=True 
-            difficulty = slider.getValue()
+            difficulty = int(slider.getValue())
              
             
         elif event.type == pygame.MOUSEBUTTONDOWN and event.button == 1 and stop:
@@ -192,7 +199,7 @@ while (run):
     
     result = checkWin(grid)
     
-    if result == "con":
+    if result == 'C':
 
 
         if first_player == False:
@@ -219,5 +226,6 @@ while (run):
     text = f.render("Press R to change the difficutly and reset the game",True,(0,0,0))  
     screen.blit(text,(width*0.24,0.1*height))        
     pygame_widgets.update(pygame.event.get())
+    clock.tick(120)
     pygame.display.update()
 
